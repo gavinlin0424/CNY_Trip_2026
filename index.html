@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>2026 春節家旅</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bg: '#F2F4F6',
+                        surface: '#FFFFFF',
+                        primary: '#E11D48',   // Festive Red
+                        accent: '#F59E0B',    // Gold
+                        text: '#1E293B',
+                        subtext: '#94A3B8',
+                    },
+                    fontFamily: {
+                        sans: ['Zen Maru Gothic', 'Noto Sans TC', 'sans-serif'],
+                        mono: ['Inter', 'monospace'],
+                    },
+                    boxShadow: {
+                        'soft': '0 8px 30px rgba(0,0,0,0.04)',
+                        'float': '0 20px 40px rgba(0,0,0,0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F2F4F6;
+            -webkit-tap-highlight-color: transparent;
+            padding-bottom: calc(env(safe-area-inset-bottom) + 80px);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .fade-in { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.5);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        
+        /* Drive Toggle Button Styles */
+        .drive-btn { transition: all 0.3s ease; }
+        .drive-btn.active { background-color: #1E293B; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .drive-btn:not(.active) { color: #94A3B8; background-color: transparent; }
+
+        /* Shimmer */
+        .shimmer {
+            background: #f6f7f8;
+            background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+            background-repeat: no-repeat;
+            background-size: 800px 104px; 
+            display: inline-block;
+            position: relative; 
+            animation-duration: 1s;
+            animation-fill-mode: forwards; 
+            animation-iteration-count: infinite;
+            animation-name: placeholderShimmer;
+            animation-timing-function: linear;
+        }
+        @keyframes placeholderShimmer { 0% { background-position: -468px 0; } 100% { background-position: 468px 0; } }
+    </style>
+</head>
+<body class="text-text antialiased">
+
+    <div class="fixed top-0 w-full h-safe bg-bg z-50"></div>
+    
+    <main class="pt-8 px-5 max-w-md mx-auto min-h-screen">
+        
+        <header class="flex justify-between items-center mb-6 fade-in">
+            <div>
+                <span class="bg-red-100 text-primary text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Lunar New Year Trip</span>
+                <h1 class="text-3xl font-bold text-text mt-1">2026 春節 <span class="text-primary text-4xl">.</span></h1>
+            </div>
+            <div class="w-12 h-12 rounded-full bg-white shadow-soft flex items-center justify-center border-4 border-white text-2xl">🐎</div>
+        </header>
+
+        <section id="dashboard" class="tab-content active fade-in">
+            
+            <div class="bg-primary text-white rounded-[2rem] p-6 mb-5 shadow-soft relative overflow-hidden group">
+                <div class="absolute -right-8 -top-8 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl group-hover:scale-110 transition-transform duration-700"></div>
+                <div class="absolute -left-4 -bottom-4 w-24 h-24 bg-accent opacity-20 rounded-full blur-xl"></div>
+                
+                <div class="flex justify-between items-end relative z-10">
+                    <div>
+                        <p class="text-red-100 text-xs font-bold mb-1 uppercase tracking-wide">初三出發</p>
+                        <h2 class="text-5xl font-bold font-mono tracking-tighter" id="countdown-days">--</h2>
+                    </div>
+                    <div class="text-right">
+                        <i class="fas fa-car-side text-3xl mb-2 block opacity-90"></i>
+                        <p class="text-red-100 text-[10px] font-bold">Feb 19, 2026</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] p-1 shadow-soft mb-5">
+                <div class="bg-slate-50 border border-slate-100 rounded-[1.8rem] p-5 relative overflow-hidden">
+                    
+                    <div class="flex justify-center mb-5 bg-slate-200 rounded-full p-1 w-fit mx-auto shadow-inner">
+                        <button onclick="toggleDrive('day1')" id="btn-day1" class="drive-btn active text-[10px] px-4 py-1.5 rounded-full font-bold">Day 1</button>
+                        <button onclick="toggleDrive('day2')" id="btn-day2" class="drive-btn text-[10px] px-4 py-1.5 rounded-full font-bold">Day 2</button>
+                        <button onclick="toggleDrive('day3')" id="btn-day3" class="drive-btn text-[10px] px-4 py-1.5 rounded-full font-bold">Day 3</button>
+                    </div>
+
+                    <div id="drive-info">
+                        </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-[2rem] p-5 shadow-soft mb-5 relative overflow-hidden min-h-[180px]">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <div class="flex items-center gap-2 text-slate-400 text-xs font-bold uppercase tracking-wider mb-1 cursor-pointer" onclick="fetchWeather()">
+                            <i class="fas fa-location-arrow text-primary animate-pulse" id="loc-icon"></i> 
+                            <span id="weather-loc">定位中...</span>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <h2 class="text-4xl font-bold text-slate-800" id="current-temp">--°</h2>
+                            <span class="text-sm text-slate-500 font-medium" id="weather-desc">Loading</span>
+                        </div>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center text-primary text-2xl" id="current-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                </div>
+                <div class="space-y-3 pt-3 border-t border-slate-100" id="forecast-container">
+                    <div class="h-8 w-full shimmer rounded-lg"></div>
+                    <div class="h-8 w-full shimmer rounded-lg"></div>
+                    <div class="h-8 w-full shimmer rounded-lg"></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div onclick="switchTab('wallet')" class="bg-slate-900 text-white p-5 rounded-[2rem] shadow-soft flex flex-col justify-between h-36 cursor-pointer hover:scale-[1.02] transition-transform">
+                    <div class="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center text-white text-lg"><i class="fas fa-wallet"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold">Total Spent</p>
+                        <p class="text-xl font-bold font-mono tracking-tight" id="dash-total">NT$0</p>
+                    </div>
+                </div>
+                <div onclick="switchTab('list')" class="bg-white p-5 rounded-[2rem] shadow-soft flex flex-col justify-between h-36 cursor-pointer hover:scale-[1.02] transition-transform">
+                    <div class="w-10 h-10 bg-green-50 rounded-2xl flex items-center justify-center text-green-500 text-xl"><i class="fas fa-suitcase"></i></div>
+                    <div>
+                        <p class="text-xs text-slate-400 font-bold">Checklist</p>
+                        <p class="text-xl font-bold text-slate-800" id="checklist-count">0 Items</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="plan" class="tab-content fade-in">
+            <h2 class="text-2xl font-bold mb-6">Itinerary</h2>
+            <div id="itinerary-list" class="space-y-6 pb-24"></div>
+            <button onclick="openModal()" class="fixed bottom-28 right-5 w-14 h-14 bg-slate-900 text-white rounded-2xl shadow-float flex items-center justify-center text-xl hover:scale-110 active:scale-90 transition-all z-40"><i class="fas fa-plus"></i></button>
+        </section>
+
+        <section id="guide" class="tab-content fade-in">
+            <h2 class="text-2xl font-bold mb-6">Hotel & Spot</h2>
+            <div class="space-y-5 pb-24">
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-soft group">
+                    <div class="h-48 bg-slate-200 relative"><img src="https://www.jph.com.tw/upload/fac_b/40ec4dfd96d22d252431d1d8a4369e5d.jpg" class="w-full h-full object-cover"><div class="absolute bottom-5 left-5 text-white drop-shadow-md"><h3 class="font-bold text-xl">劍湖山王子大飯店</h3><p class="text-xs opacity-90">Yunlin • Day 1</p></div></div>
+                    <div class="p-6"><div class="flex gap-2 mb-3"><span class="bg-red-50 text-red-500 text-[10px] font-bold px-2 py-1 rounded">一泊二食</span><span class="bg-blue-50 text-blue-500 text-[10px] font-bold px-2 py-1 rounded">樂園門票</span></div><p class="text-sm text-slate-600 leading-relaxed text-justify mb-2">記得在 10:00 前抵達飯店大廳辦理手續，先領取門票進樂園玩。晚餐時段預約為 **19:30**，請勿遲到。</p><button onclick="window.open('https://maps.app.goo.gl/YourMapLinkHere')" class="text-xs font-bold text-slate-400 hover:text-primary"><i class="fas fa-map-marker-alt mr-1"></i> Google Maps</button></div>
+                </div>
+                <div class="bg-white rounded-[2rem] overflow-hidden shadow-soft group">
+                    <div class="h-48 bg-slate-200 relative"><img src="https://www.fullon-hotels.com.tw/ym/upload/fac_b/8a719c8d672802f1a302824905151522.jpg" class="w-full h-full object-cover"><div class="absolute bottom-5 left-5 text-white drop-shadow-md"><h3 class="font-bold text-xl">麗寶賽車主題旅店 T11/T12</h3><p class="text-xs opacity-90">Taichung • Day 2</p></div></div>
+                    <div class="p-6"><div class="flex gap-2 mb-3"><span class="bg-green-50 text-green-500 text-[10px] font-bold px-2 py-1 rounded">2日樂園券</span><span class="bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-1 rounded">無晚餐</span></div><p class="text-sm text-slate-600 leading-relaxed text-justify mb-2">位於麗寶賽車場旁。樂園券為兩日券，Day 2 與 Day 3 皆可入園。晚餐建議在麗寶 Outlet Mall 享用。</p><button onclick="window.open('https://maps.app.goo.gl/LihpaoMapLink')" class="text-xs font-bold text-slate-400 hover:text-primary"><i class="fas fa-map-marker-alt mr-1"></i> Google Maps</button></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="wallet" class="tab-content fade-in">
+            <h2 class="text-2xl font-bold mb-6">Wallet</h2>
+            <div class="bg-white rounded-[2rem] p-6 shadow-soft mb-6 relative z-10">
+                <div class="flex flex-col gap-4">
+                    <input type="text" id="expense-name" placeholder="消費項目 (如: 加油)" class="bg-slate-50 w-full rounded-2xl p-4 text-sm font-bold outline-none">
+                    <div class="flex gap-3">
+                        <div class="relative flex-1"><input type="text" id="expense-amount" placeholder="0" class="bg-slate-50 w-full rounded-2xl p-4 text-lg font-mono font-bold outline-none text-primary"><span class="absolute right-4 top-4 text-xs font-bold text-slate-300">TWD</span></div>
+                        <label class="w-14 h-auto bg-slate-900 rounded-2xl flex items-center justify-center text-white cursor-pointer shadow-lg shadow-slate-300"><i class="fas fa-camera"></i><input type="file" id="expense-photo" accept="image/*" class="hidden" onchange="handlePhotoSelect(this)"></label>
+                    </div>
+                    <div id="photo-preview-container" class="hidden relative w-full h-32 rounded-2xl overflow-hidden shadow-inner"><img id="preview-thumb" class="w-full h-full object-cover"><button onclick="clearPhoto()" class="absolute top-2 right-2 bg-black/50 text-white w-6 h-6 rounded-full flex items-center justify-center"><i class="fas fa-times text-xs"></i></button></div>
+                    <button onclick="addExpense()" class="w-full bg-primary text-white py-3 rounded-2xl font-bold text-sm shadow-lg shadow-red-200 mt-2 active:scale-95 transition">新增紀錄</button>
+                </div>
+            </div>
+            <div class="flex justify-between items-center mb-4 px-2"><h3 class="font-bold text-sm text-slate-400 uppercase">History</h3></div>
+            <div id="expense-list" class="space-y-3 pb-24"></div>
+            <div class="fixed bottom-24 left-5 right-5 bg-slate-900 text-white p-4 rounded-2xl shadow-float flex justify-between items-center z-30 transition-transform translate-y-40" id="total-bar"><span class="text-xs font-bold text-slate-400">Total</span><span class="text-xl font-bold font-mono" id="total-twd">NT$0</span></div>
+        </section>
+
+        <section id="list" class="tab-content fade-in">
+            <h2 class="text-2xl font-bold mb-6">Checklist</h2>
+            <div class="bg-white rounded-[2rem] p-6 shadow-soft mb-6">
+                <div class="flex gap-2 mb-4"><input type="text" id="checklist-input" placeholder="新增物品..." class="bg-slate-50 flex-1 rounded-xl px-4 py-3 text-sm font-medium outline-none"><button onclick="addChecklistItem()" class="bg-slate-900 text-white w-12 rounded-xl flex items-center justify-center"><i class="fas fa-plus"></i></button></div>
+                <div id="checklist-container" class="space-y-1"></div>
+            </div>
+            <div class="bg-white rounded-[2rem] p-6 shadow-soft mb-6">
+                <h3 class="font-bold text-lg mb-4 text-slate-700">Memo</h3>
+                <div class="flex gap-2 mb-4"><input type="text" id="memo-input" placeholder="記事或網址..." class="bg-slate-50 flex-1 rounded-xl px-4 py-3 text-sm font-medium outline-none"><button onclick="addMemo()" class="bg-slate-200 text-slate-600 w-12 rounded-xl flex items-center justify-center"><i class="fas fa-paper-plane"></i></button></div>
+                <ul id="memo-list" class="space-y-2"></ul>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-6 left-4 right-4 z-50">
+        <div class="glass-nav rounded-[2rem] h-16 flex justify-around items-center px-1 shadow-float">
+            <button onclick="switchTab('dashboard')" class="nav-btn active w-12 h-12 rounded-2xl flex items-center justify-center text-slate-300 transition-all duration-300" data-target="dashboard"><i class="fas fa-home text-lg"></i></button>
+            <button onclick="switchTab('plan')" class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center text-slate-300 transition-all duration-300" data-target="plan"><i class="fas fa-calendar-alt text-lg"></i></button>
+            <button onclick="switchTab('guide')" class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center text-slate-300 transition-all duration-300" data-target="guide"><i class="fas fa-map-marked-alt text-lg"></i></button>
+            <button onclick="switchTab('wallet')" class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center text-slate-300 transition-all duration-300" data-target="wallet"><i class="fas fa-wallet text-lg"></i></button>
+            <button onclick="switchTab('list')" class="nav-btn w-12 h-12 rounded-2xl flex items-center justify-center text-slate-300 transition-all duration-300" data-target="list"><i class="fas fa-list-check text-lg"></i></button>
+        </div>
+    </nav>
+
+    <div id="event-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-[85%] max-w-sm rounded-[2rem] p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="modal-content">
+            <h3 class="font-bold text-xl mb-5 text-center">新增行程</h3>
+            <div class="space-y-4">
+                <div><label class="text-[10px] font-bold text-slate-400 uppercase ml-2">Day</label><div class="flex overflow-x-auto gap-2 mt-1 no-scrollbar pb-1" id="modal-day-selector"></div><input type="hidden" id="modal-day-idx" value="0"></div>
+                <div class="flex gap-3"><input type="time" id="modal-time" class="bg-slate-50 w-1/3 rounded-2xl p-3 text-sm font-bold outline-none text-center"><input type="text" id="modal-title" placeholder="標題" class="bg-slate-50 w-2/3 rounded-2xl p-3 text-sm font-bold outline-none"></div>
+                <input type="text" id="modal-desc" placeholder="備註..." class="bg-slate-50 w-full rounded-2xl p-3 text-sm outline-none">
+                <div class="flex gap-3 mt-6 pt-2"><button onclick="closeModal()" class="flex-1 py-3 rounded-2xl font-bold text-slate-500 bg-slate-100">取消</button><button onclick="confirmAddEvent()" class="flex-1 py-3 rounded-2xl font-bold text-white bg-slate-900">儲存</button></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DRIVING DATA ---
+        const drivingData = {
+            day1: {
+                from: "Yilan", fromName: "宜蘭壯圍",
+                to: "Yunlin", toName: "劍湖山",
+                time: "~3h 30m", dist: "215 km",
+                percent: 80,
+                detail: "DEPART 06:30 • HOTEL Prince"
+            },
+            day2: {
+                from: "Yunlin", fromName: "劍湖山",
+                to: "Taichung", toName: "麗寶樂園",
+                time: "~1h 10m", dist: "75 km",
+                percent: 40,
+                detail: "DEPART 11:00 • HOTEL T11/T12"
+            },
+            day3: {
+                from: "Taichung", fromName: "麗寶樂園",
+                to: "Yilan", toName: "甜蜜的家",
+                time: "~2h 30m", dist: "165 km",
+                percent: 65,
+                detail: "ARRIVE 22:00 • HOME SWEET HOME"
+            }
+        };
+
+        const defaultItinerary = [
+            { day: "Day 1", date: "2/19 (初三)", title: "劍湖山", events: [ { time: "06:30", title: "宜蘭壯圍出發", desc: "避開春節車潮" }, { time: "10:00", title: "劍湖山王子飯店", desc: "抵達、先Check-in領票" }, { time: "10:30", title: "劍湖山世界", desc: "樂園遊玩" }, { time: "15:30", title: "飯店進房", desc: "休息、享受設施" }, { time: "19:30", title: "飯店晚餐 (一泊二食)", desc: "預約 19:30 用餐" } ] },
+            { day: "Day 2", date: "2/20 (初四)", title: "移動至台中", events: [ { time: "09:00", title: "飯店早餐", desc: "享用自助早餐" }, { time: "11:00", title: "退房前往台中", desc: "車程約 1 小時多" }, { time: "12:30", title: "麗寶 T11/T12", desc: "抵達飯店、寄放行李" }, { time: "13:00", title: "麗寶樂園 / Outlet", desc: "使用2日券入園" }, { time: "18:00", title: "晚餐：麗寶 Outlet", desc: "自理" } ] },
+            { day: "Day 3", date: "2/21 (初五)", title: "返程", events: [ { time: "11:00", title: "退房", desc: "行李上車" }, { time: "11:30", title: "麗寶樂園 (續玩)", desc: "使用2日券" }, { time: "15:00", title: "北上返程", desc: "中途可停苗栗/新竹" }, { time: "22:00", title: "抵達宜蘭壯圍", desc: "平安返家" } ] }
+        ];
+
+        const defaultChecklist = [{txt:"身分證/健保卡",done:false},{txt:"駕照/行照",done:false},{txt:"泳衣/泳帽 (飯店設施)",done:false},{txt:"暈車藥/個人藥品",done:false},{txt:"手機充電線/行充",done:false},{txt:"保暖衣物",done:false}];
+
+        // --- STATE ---
+        let itinerary = JSON.parse(localStorage.getItem('cny2026_itin')) || defaultItinerary;
+        let expenses = JSON.parse(localStorage.getItem('cny2026_exp')) || [];
+        let checklist = JSON.parse(localStorage.getItem('cny2026_check')) || defaultChecklist;
+        let memos = JSON.parse(localStorage.getItem('cny2026_memo')) || [];
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCountdown();
+            toggleDrive('day1'); // Init Drive Widget
+            fetchWeather();
+            renderItinerary();
+            renderExpenses();
+            renderChecklist();
+            renderMemos();
+
+            window.switchTab = (id) => {
+                document.querySelectorAll('.tab-content').forEach(el => {
+                    el.classList.remove('active', 'fade-in');
+                    if(el.id === id) { el.classList.add('active', 'fade-in'); window.scrollTo(0,0); }
+                });
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    if(btn.dataset.target === id) {
+                        btn.classList.add('text-slate-900', 'bg-slate-100', 'scale-110'); btn.classList.remove('text-slate-300');
+                    } else {
+                        btn.classList.remove('text-slate-900', 'bg-slate-100', 'scale-110'); btn.classList.add('text-slate-300');
+                    }
+                });
+                const tb = document.getElementById('total-bar');
+                if(id === 'wallet') tb.classList.remove('translate-y-40'); else tb.classList.add('translate-y-40');
+            };
+            switchTab('dashboard');
+        });
+
+        // --- DRIVING WIDGET LOGIC ---
+        function toggleDrive(day) {
+            // Update Buttons
+            ['day1', 'day2', 'day3'].forEach(d => {
+                const btn = document.getElementById(`btn-${d}`);
+                if (d === day) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update Content
+            const data = drivingData[day];
+            const html = `
+                <div class="flex justify-between items-center relative z-10 fade-in">
+                    <div class="text-center w-20">
+                        <div class="text-2xl font-bold font-mono text-slate-800">${data.from}</div>
+                        <div class="text-[10px] font-bold text-slate-400 mt-1 uppercase whitespace-nowrap">${data.fromName}</div>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center px-2">
+                        <div class="text-[10px] font-bold text-primary mb-1">${data.time}</div>
+                        <div class="w-full h-1 bg-slate-200 relative rounded-full overflow-visible flex items-center">
+                            <div class="absolute left-0 top-0 h-full bg-primary rounded-full" style="width:${data.percent}%"></div>
+                            <div class="absolute -ml-2 -mt-2 bg-white rounded-full p-1 shadow-sm border border-slate-100" style="left:${data.percent}%">
+                                <i class="fas fa-car text-primary text-xs block"></i>
+                            </div>
+                        </div>
+                        <div class="text-[9px] text-slate-400 mt-2">${data.dist}</div>
+                    </div>
+                    <div class="text-center w-20">
+                        <div class="text-2xl font-bold font-mono text-slate-800">${data.to}</div>
+                        <div class="text-[10px] font-bold text-slate-400 mt-1 uppercase whitespace-nowrap">${data.toName}</div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-dashed border-slate-300 text-center text-xs font-bold text-slate-500 fade-in">
+                    ${data.detail}
+                </div>
+            `;
+            document.getElementById('drive-info').innerHTML = html;
+        }
+
+        // --- WEATHER ---
+        function fetchWeather() {
+            document.getElementById('weather-loc').innerText = "定位中...";
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    document.getElementById('loc-icon').classList.remove('animate-spin');
+                    try {
+                        const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=zh-TW`;
+                        const geoRes = await fetch(geoUrl);
+                        const geoData = await geoRes.json();
+                        let locName = "目前位置";
+                        if(geoData.address) { locName = (geoData.address.city || geoData.address.county || "") + " " + (geoData.address.district || geoData.address.town || ""); }
+                        document.getElementById('weather-loc').innerText = locName;
+                    } catch (e) { document.getElementById('weather-loc').innerText = "定位成功"; }
+                    try {
+                        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=4`);
+                        const wData = await wRes.json();
+                        renderWeather(wData);
+                    } catch (e) { document.getElementById('weather-desc').innerText = "Error"; }
+                }, () => {
+                    document.getElementById('loc-icon').classList.remove('animate-spin');
+                    document.getElementById('weather-loc').innerText = "雲林古坑 (預設)";
+                    fetch(`https://api.open-meteo.com/v1/forecast?latitude=23.6176&longitude=120.5750&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=4`)
+                    .then(r=>r.json()).then(renderWeather);
+                });
+            } else { document.getElementById('weather-loc').innerText = "不支援定位"; }
+        }
+
+        function renderWeather(data) {
+            const curTemp = Math.round(data.current.temperature_2m);
+            const curCode = data.current.weather_code;
+            document.getElementById('current-temp').innerText = `${curTemp}°`;
+            document.getElementById('weather-desc').innerText = getWeatherDesc(curCode);
+            document.getElementById('current-icon').innerHTML = getWeatherIcon(curCode);
+            const daily = data.daily;
+            let html = '';
+            for(let i=1; i<=3; i++) {
+                const date = new Date(daily.time[i]);
+                const dayName = date.toLocaleDateString('zh-TW', {weekday: 'narrow'});
+                const min = Math.round(daily.temperature_2m_min[i]);
+                const max = Math.round(daily.temperature_2m_max[i]);
+                const code = daily.weather_code[i];
+                const rain = daily.precipitation_probability_max[i];
+                html += `<div class="flex justify-between items-center text-sm"><div class="w-10 font-bold text-slate-400">週${dayName}</div><div class="flex-1 flex items-center justify-center gap-2"><span class="text-slate-600 text-lg">${getWeatherIcon(code)}</span>${rain>20?`<span class="text-xs font-bold text-blue-500 bg-blue-50 px-2 rounded-full"><i class="fas fa-umbrella mr-1"></i>${rain}%</span>`:`<span class="text-xs font-bold text-slate-300 bg-slate-50 px-2 rounded-full">晴</span>`}</div><div class="w-16 text-right font-bold text-slate-700">${min}° / ${max}°</div></div>`;
+            }
+            document.getElementById('forecast-container').innerHTML = html;
+        }
+        function getWeatherDesc(c) { if(c===0)return "晴朗"; if(c<=3)return "多雲"; if(c<=67)return "有雨"; return "雷雨"; }
+        function getWeatherIcon(c) { if(c===0)return '<i class="fas fa-sun text-orange-400"></i>'; if(c<=3)return '<i class="fas fa-cloud-sun text-slate-400"></i>'; if(c<=67)return '<i class="fas fa-cloud-rain text-blue-400"></i>'; return '<i class="fas fa-bolt text-yellow-500"></i>'; }
+
+        // --- DASHBOARD ---
+        function updateCountdown() {
+            const days = Math.ceil((new Date("2026-02-19") - new Date()) / (86400000));
+            document.getElementById('countdown-days').innerText = days > 0 ? days : "Go";
+        }
+
+        // --- PLAN ---
+        function renderItinerary() {
+            const c = document.getElementById('itinerary-list');
+            c.innerHTML = itinerary.map((d,i) => {
+                d.events.sort((a,b)=>a.time.localeCompare(b.time));
+                return `<div class="relative"><div class="sticky top-0 bg-bg/95 backdrop-blur z-20 py-3 mb-2 flex items-baseline gap-3 border-b border-slate-200"><span class="text-3xl font-bold font-mono text-slate-300">${d.day.replace('Day ','0')}</span><div><h3 class="font-bold text-slate-800 text-lg leading-none">${d.title}</h3><span class="text-[10px] font-bold text-primary uppercase">${d.date}</span></div></div><div class="space-y-3 pl-2">${d.events.map((e,j)=>`<div class="flex gap-4 group"><div class="w-12 pt-4 text-right flex-shrink-0"><span class="font-mono text-xs font-bold text-slate-400 block">${e.time}</span><div class="w-2 h-2 rounded-full bg-slate-200 mx-auto mt-2 group-hover:bg-primary transition-colors"></div></div><div class="bg-white p-4 rounded-[1.5rem] shadow-sm flex-1 relative"><h4 class="font-bold text-slate-800 text-sm">${e.title}</h4><p class="text-xs text-slate-500 mt-1">${e.desc}</p><button onclick="delEv(${i},${j})" class="absolute top-4 right-4 text-slate-200 hover:text-red-400"><i class="fas fa-trash-alt text-xs"></i></button></div></div>`).join('')}</div></div>`;
+            }).join('');
+        }
+        function openModal(){ document.getElementById('event-modal').classList.remove('hidden'); setTimeout(()=>document.getElementById('event-modal').classList.remove('opacity-0'),10); const ds=document.getElementById('modal-day-selector'); ds.innerHTML=itinerary.map((d,i)=>`<button onclick="selDay(this,${i})" class="day-sel flex-shrink-0 w-10 h-10 rounded-xl text-xs font-bold border border-slate-200 flex items-center justify-center ${i==0?'bg-slate-900 text-white':'bg-white text-slate-400'}">${d.day.replace('Day ','')}</button>`).join(''); document.getElementById('modal-day-idx').value=0;}
+        function closeModal(){document.getElementById('event-modal').classList.add('opacity-0'); setTimeout(()=>document.getElementById('event-modal').classList.add('hidden'),300);}
+        function selDay(b,i){document.querySelectorAll('.day-sel').forEach(x=>x.className='day-sel flex-shrink-0 w-10 h-10 rounded-xl text-xs font-bold border border-slate-200 flex items-center justify-center bg-white text-slate-400'); b.className='day-sel flex-shrink-0 w-10 h-10 rounded-xl text-xs font-bold border border-transparent flex items-center justify-center bg-slate-900 text-white scale-110'; document.getElementById('modal-day-idx').value=i;}
+        function confirmAddEvent(){const i=document.getElementById('modal-day-idx').value, t=document.getElementById('modal-time').value, ti=document.getElementById('modal-title').value, de=document.getElementById('modal-desc').value; if(ti){itinerary[i].events.push({time:t,title:ti,desc:de}); localStorage.setItem('cny2026_itin',JSON.stringify(itinerary)); renderItinerary(); closeModal();}}
+        function delEv(i,j){if(confirm('刪除？')){itinerary[i].events.splice(j,1); localStorage.setItem('cny2026_itin',JSON.stringify(itinerary)); renderItinerary();}}
+
+        // --- WALLET ---
+        function addExpense() {
+            const n=document.getElementById('expense-name').value, aStr=document.getElementById('expense-amount').value, img=document.getElementById('preview-thumb').src;
+            try{const a=eval(aStr.replace(/[^-()\d/*+.]/g,'')); if(n&&a>0){expenses.unshift({id:Date.now(),name:n,amt:a,img:img.startsWith('data')?img:null}); localStorage.setItem('cny2026_exp',JSON.stringify(expenses)); renderExpenses(); document.getElementById('expense-name').value=''; document.getElementById('expense-amount').value=''; clearPhoto();}}catch{}
+        }
+        function renderExpenses(){ let t=0; document.getElementById('expense-list').innerHTML=expenses.map(e=>{t+=e.amt; return `<div class="bg-white p-3 rounded-[1.5rem] flex items-center shadow-sm relative group overflow-hidden">${e.img?`<div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden mr-3 border border-slate-100 flex-shrink-0 cursor-pointer" onclick="window.open('${e.img}')"><img src="${e.img}" class="w-full h-full object-cover"></div>`:`<div class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center mr-3 text-slate-300 text-lg flex-shrink-0"><i class="fas fa-receipt"></i></div>`}<div class="flex-1 min-w-0"><p class="font-bold text-slate-800 truncate text-sm">${e.name}</p></div><div class="text-right"><p class="font-bold text-slate-800 font-mono text-sm">NT$${e.amt.toLocaleString()}</p></div><button onclick="delExp(${e.id})" class="absolute right-0 top-0 bottom-0 w-12 bg-red-500 text-white flex items-center justify-center translate-x-full group-hover:translate-x-0 transition-transform"><i class="fas fa-times"></i></button></div>`}).join(''); document.getElementById('total-twd').innerText="NT$"+t.toLocaleString(); document.getElementById('dash-total').innerText="NT$"+t.toLocaleString();}
+        function delExp(id){expenses=expenses.filter(e=>e.id!==id); localStorage.setItem('cny2026_exp',JSON.stringify(expenses)); renderExpenses();}
+        function handlePhotoSelect(i){if(i.files&&i.files[0]){const r=new FileReader(); r.onload=e=>{const img=new Image(); img.src=e.target.result; img.onload=()=>{const c=document.createElement('canvas'),x=c.getContext('2d'),m=500; let w=img.width,h=img.height; if(w>h&&w>m){h*=m/w;w=m}else if(h>m){w*=m/h;h=m} c.width=w;c.height=h;x.drawImage(img,0,0,w,h); document.getElementById('preview-thumb').src=c.toDataURL('image/jpeg',0.7); document.getElementById('photo-preview-container').classList.remove('hidden');}}; r.readAsDataURL(i.files[0]);}}
+        function clearPhoto(){document.getElementById('photo-preview-container').classList.add('hidden'); document.getElementById('preview-thumb').src=''; document.getElementById('expense-photo').value='';}
+
+        // --- CHECKLIST & MEMO ---
+        function renderChecklist(){const c=document.getElementById('checklist-container'); c.innerHTML=checklist.map((x,i)=>`<div class="flex items-center group py-2 border-b border-slate-50 last:border-0"><button onclick="togChk(${i})" class="w-6 h-6 rounded-full border-2 ${x.done?'bg-green-400 border-green-400 text-white':'border-slate-200 text-transparent'} flex items-center justify-center"><i class="fas fa-check text-[10px]"></i></button><span class="ml-3 text-sm font-medium ${x.done?'text-slate-300 line-through':'text-slate-700'} flex-1">${x.txt}</span><button onclick="delChk(${i})" class="text-slate-200 hover:text-red-400 px-2"><i class="fas fa-times"></i></button></div>`).join(''); document.getElementById('checklist-count').innerText=`${checklist.filter(x=>x.done).length}/${checklist.length}`;}
+        function addChecklistItem(){const i=document.getElementById('checklist-input'); if(i.value){checklist.push({txt:i.value,done:false}); localStorage.setItem('cny2026_check',JSON.stringify(checklist)); i.value=''; renderChecklist();}}
+        function togChk(i){checklist[i].done=!checklist[i].done; localStorage.setItem('cny2026_check',JSON.stringify(checklist)); renderChecklist();}
+        function delChk(i){checklist.splice(i,1); localStorage.setItem('cny2026_check',JSON.stringify(checklist)); renderChecklist();}
+        function renderMemos(){document.getElementById('memo-list').innerHTML=memos.map((m,i)=>`<li class="bg-slate-50 p-3 rounded-2xl text-sm text-slate-600 flex justify-between"><span class="break-all">${m.replace(/(http[s]?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" class="text-primary underline">Link</a>')}</span><button onclick="delMemo(${i})" class="text-slate-300 hover:text-red-400 ml-2"><i class="fas fa-times"></i></button></li>`).join('');}
+        function addMemo(){const i=document.getElementById('memo-input'); if(i.value){memos.unshift(i.value); localStorage.setItem('cny2026_memo',JSON.stringify(memos)); i.value=''; renderMemos();}}
+        function delMemo(i){memos.splice(i,1); localStorage.setItem('cny2026_memo',JSON.stringify(memos)); renderMemos();}
+    </script>
+</body>
+</html>
